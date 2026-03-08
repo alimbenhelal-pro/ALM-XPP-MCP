@@ -3,11 +3,12 @@
   "name": "io.github.alimbenhelal-pro/alm-xpp-mcp",
   "version": "1.0.0",
   "title": "ALM X++ MCP Server",
-  "description": "Cloud MCP server for D365 F&O developers. 40+ AI tools: code search, ADO work item analysis, best practices, security tracing, upgrade impact, entity generation and more.",
+  "description": "Cloud MCP server for Dynamics 365 F&O developers. 40+ AI tools via HTTPS.",
   "websiteUrl": "https://www.almxpp.com",
   "packages": [
     {
       "registryType": "other",
+      "identifier": "alm-xpp-mcp",
       "transport": {
         "type": "http",
         "url": "https://www.almxpp.com/mcp"
