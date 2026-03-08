@@ -1,5 +1,5 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.alimbenhelal-pro/alm-xpp-mcp",
   "version": "1.0.0",
   "title": "ALM X++ MCP Server",
@@ -10,7 +10,7 @@
       "registryType": "other",
       "identifier": "alm-xpp-mcp",
       "transport": {
-        "type": "http",
+        "type": "streamable-http",
         "url": "https://www.almxpp.com/mcp"
       }
     }
