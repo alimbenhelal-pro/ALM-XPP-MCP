@@ -7,7 +7,7 @@
   "websiteUrl": "https://www.almxpp.com",
   "remotes": [
     {
-      "transportType": "streamable-http",
+      "type": "streamable-http",
       "url": "https://www.almxpp.com/mcp"
     }
   ],
