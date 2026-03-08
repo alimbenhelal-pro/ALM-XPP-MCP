@@ -5,14 +5,10 @@
   "title": "ALM X++ MCP Server",
   "description": "Cloud MCP server for Dynamics 365 F&O developers. 40+ AI tools via HTTPS.",
   "websiteUrl": "https://www.almxpp.com",
-  "packages": [
+  "remotes": [
     {
-      "registryType": "other",
-      "identifier": "alm-xpp-mcp",
-      "transport": {
-        "type": "streamable-http",
-        "url": "https://www.almxpp.com/mcp"
-      }
+      "transportType": "streamable-http",
+      "url": "https://www.almxpp.com/mcp"
     }
   ],
   "repository": {
