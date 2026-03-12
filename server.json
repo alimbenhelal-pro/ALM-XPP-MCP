@@ -1,9 +1,9 @@
-{
+ï»¿{
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.alimbenhelal-pro/alm-xpp-mcp",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "title": "ALM X++ MCP Server",
-  "description": "D365 F&O AI tools: code search, ADO analysis, CoC generation, upgrade impact.",
+  "description": "Cloud MCP server for Dynamics 365 Finance & Operations. 50 AI tools for code search, ADO work item analysis, CoC generation, upgrade impact assessment, security chain traversal, and label resolution. Zero local setup required.",
   "websiteUrl": "https://www.almxpp.com",
   "icons": [
     {
@@ -18,7 +18,7 @@
       "url": "https://www.almxpp.com/mcp",
       "variables": {
         "apiKey": {
-          "description": "Your ALM X++ license key — request one at https://www.almxpp.com",
+          "description": "Your ALM X++ license key - request one at https://www.almxpp.com",
           "required": true,
           "secret": true
         }
