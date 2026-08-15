@@ -1,6 +1,6 @@
 # almxppmcp
 
-> **npx launcher** for the [ALM XPP MCP](https://almxpp.com) cloud server - a D365 Finance & Operations AI Agent with 34 tools.
+> **npx launcher** for the [ALM XPP MCP](https://almxpp.com) cloud server - a Dynamics 365 Finance & Operations AI agent exposing **90 tools** over MCP.
 
 ## Requirements
 
@@ -210,18 +210,38 @@ See `npm/examples/vscode-mcp.d365fo-data.json`, `npm/examples/vscode-mcp.d365fo-
 
 ## What tools are available?
 
-The server exposes 34 tools across 6 categories:
+The cloud server exposes **90 tools** across 14 categories. A companion local
+server adds 58 more for anything that must run next to your D365 environment
+(build, deploy, database sync, workspace writes).
 
-| Category | Tools |
-|---|---|
-| **Discovery** | `search_d365_code`, `get_object_details`, `list_objects`, `get_relation_graph`, `find_related_objects` |
-| **References & Impact** | `find_references`, `find_extensions`, `find_callers` |
-| **Code Generation** | `generate_xpp_template`, `generate_query`, `generate_d365_solution`, `generate_unit_test` |
-| **Quality & Validation** | `validate_best_practices`, `detect_performance_issues`, `validate_aot_pattern`, `explain_code_complexity`, `suggest_refactoring` |
-| **Security & Licensing** | `trace_security_chain`, `trace_role_license_tree`, `generate_security_governance_report` |
-| **Azure DevOps** | `ado_query_workitems`, `ado_create_task`, `ado_list_prs`, `ado_analyze_pr_impact`, `ado_post_comment`, `ado_post_pr_comment`, `ado_changelog_from_prs`, `ado_analyze_workitem`, `ado_estimate_effort`, `ado_auto_test_scenario`, `ado_gap_fit_analysis`, `ado_knowledge_gap_detector`, `ado_sprint_capacity` |
+| Category | Tools | Names |
+|---|---:|---|
+| **Search** | 5 | `search_d365_code`, `search_labels`, `batch_search`, `federated_search`, `search_context_docs` |
+| **Retrieve** | 6 | `get_object_details`, `list_objects`, `list_custom_model_objects`, `get_object_context`, `compare_objects`, `get_menu_item_info` |
+| **Relations & Impact** | 11 | `find_related_objects`, `find_references`, `find_extensions`, `get_relation_graph`, `find_entity_for_table`, `find_callers`, `find_change_impact`, `find_event_handlers`, `find_relation_path`, `find_similar_implementations`, `trace_field_lineage` |
+| **Quality & Analysis** | 7 | `validate_best_practices`, `detect_performance_issues`, `find_error_patterns`, `fix_best_practice_violations`, `recommend_extension_strategy`, `suggest_edt`, `validate_object_naming` |
+| **Security & Licensing** | 4 | `trace_security_chain`, `trace_role_license_tree`, `get_security_coverage_for_object`, `generate_security_report` |
+| **Code Generation** | 8 | `generate_unit_test`, `suggest_refactoring`, `generate_diagram`, `generate_query`, `create_aot_object`, `generate_data_entity`, `generate_xpp_form`, `generate_xpp_template` |
+| **Functional Domain** | 2 | `generate_fdd`, `explain_workflow` |
+| **Differentiators** | 2 | `analyze_upgrade_impact`, `map_business_process` |
+| **Upgrade & Release Notes** | 6 | `resolve_client_profile`, `save_client_profile`, `list_release_note_inputs`, `prepare_release_note_context`, `generate_release_note_document`, `diff_model_versions` |
+| **Live Environment** | 5 | `d365fo_set_connection`, `d365fo_clear_connection`, `odata_export_entity`, `odata_upsert_rows`, `get_data_entity_info` |
+| **Data Migration** | 7 | `dmf`, `dmf_create_data_project`, `dmf_apply_entity_filter`, `dmf_import_file`, `dmf_export_package`, `dmf_get_job_status`, `dmf_transform_excel` |
+| **Performance Diagnostics** | 4 | `appinsights_set_connection`, `appinsights_clear_connection`, `appinsights_query`, `appinsights_diagnose_slowness` |
+| **Orchestration & Reporting** | 6 | `plan_and_execute`, `summarize_for_stakeholder`, `resolve_workspace_roots`, `resync_devops_index`, `healthcheck`, `get_output_page` |
+| **Azure DevOps** | 17 | `ado_query_workitems`, `ado_analyze_workitem`, `ado_list_prs`, `ado_analyze_pr_impact`, `ado_gap_fit_analysis`, `ado_estimate_effort`, `ado_post_comment`, `ado_post_pr_comment`, `ado_create_task`, `ado_read_attachment`, `ado_update_workitem`, `ado_review_xpp_pr`, `ado_pr_dependency_map`, `ado_wiki_list`, `ado_wiki_get_page`, `ado_wiki_create_or_update_page`, `ado_wiki_delete_page` |
 
-See the [dashboard](https://almxpp.com/account/dashboard) for the full tool list.
+Beyond code search, the notable capabilities are:
+
+- **Upgrade impact** - compare two D365 versions against *your own* customisations and
+  produce the regression report as Word and PowerPoint.
+- **Live environment** - connect to a running environment, read and write real records
+  over OData, run Data Management projects.
+- **Performance diagnostics** - query Application Insights telemetry and get a ranked
+  diagnosis of what is actually slow.
+- **Azure DevOps** - work items, pull requests, wiki, from analysis to review.
+
+Full reference with parameters and example prompts: <https://www.almxpp.com/docs>
 
 ---
 
