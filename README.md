@@ -2,6 +2,10 @@
 
 > **npx launcher** for the [ALM XPP MCP](https://almxpp.com) cloud server - a Dynamics 365 Finance & Operations AI agent exposing **90 tools** over MCP.
 
+The server answers from a pre-built index of the standard D365 F&O codebase:
+**200K+ AOT objects**, **1.3M+ code chunks**, **25M+ cross-references** and
+**392K+ labels** indexed in every language.
+
 ## Requirements
 
 - Node.js >= 18

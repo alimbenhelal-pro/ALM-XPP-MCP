@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.alimbenhelal-pro/alm-xpp-mcp",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "title": "ALM X++ MCP Server",
-  "description": "90 AI tools for D365 F&O: X++ search, upgrade impact on your own code, live environment access, Azure DevOps, security tracing and code generation.",
+  "description": "90 AI tools over 200K+ indexed D365 objects and 25M+ cross-references: X++ search, upgrade impact, live environment, Azure DevOps, security tracing and code generation.",
   "websiteUrl": "https://www.almxpp.com",
   "icons": [
     {
