@@ -1,0 +1,39 @@
+{
+  "name": "almxppmcp",
+  "version": "1.4.2",
+  "mcpName": "io.github.alimbenhelal-pro/alm-xpp-mcp",
+  "description": "npx launcher for the ALM XPP MCP server - D365 F&O: 90 AI tools over 200K+ indexed objects, 25M+ cross-references, 392K+ labels.",
+  "keywords": [
+    "mcp",
+    "d365",
+    "dynamics365",
+    "finance-and-operations",
+    "xpp",
+    "ai",
+    "copilot",
+    "cursor",
+    "claude",
+    "model-context-protocol",
+    "mcp-server",
+    "azure-devops",
+    "code-generation",
+    "erp"
+  ],
+  "homepage": "https://almxpp.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alimbenhelal-pro/ALM-XPP-MCP.git"
+  },
+  "license": "MIT",
+  "bin": {
+    "almxppmcp": "bin/almxppmcp.js",
+    "almxppmcp-d365fo-proxy": "bin/almxppmcp-d365fo-proxy.js"
+  },
+  "main": "./bin/almxppmcp.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "mcp-remote": "^0.1.0"
+  }
+}

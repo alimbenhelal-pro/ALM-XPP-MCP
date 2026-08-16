@@ -249,6 +249,24 @@ Full reference with parameters and example prompts: <https://www.almxpp.com/docs
 
 ---
 
+## What is in this repository
+
+This repository holds the **client side only** — the `npx` launcher published to
+npm as [`almxppmcp`](https://www.npmjs.com/package/almxppmcp):
+
+| Path | Purpose |
+|---|---|
+| `bin/almxppmcp.js` | Resolves the API key and server URL, then bridges stdio to the cloud server via `mcp-remote` |
+| `bin/almxppmcp-d365fo-proxy.js` | Optional stdio proxy to a dedicated D365FO OData environment |
+| `examples/` | Ready-to-copy VS Code MCP configurations |
+| `server.json` | MCP registry manifest |
+
+The server itself — index, retrieval, the 148 tools and the licensing layer — is
+closed source and runs at `https://www.almxpp.com/mcp`. The launcher never sees
+your code: it forwards requests over HTTPS with the token you provide.
+
+---
+
 ## License
 
 MIT
