@@ -110,10 +110,8 @@ It adds no tools of its own -- the tools you see come from your environment.
 
 In every example below, `d365fo-data` is simply the server name chosen in the config file. Rename it freely.
 
-Two modes are supported:
-
-- local direct mode: your machine acquires the token with Azure CLI and calls the environment directly
-- cloud bridge mode: the launcher calls your hosted ALM XPP endpoint, which acquires the token server-side
+The token is acquired on your own machine with Azure CLI, so nothing about your environment transits
+through the ALM XPP cloud server: the bridge talks straight from your machine to your environment.
 
 So the split is:
 
@@ -129,6 +127,10 @@ So the split is:
 - handles plain JSON and `text/event-stream` responses
 
 ### Local direct mode
+
+This bridge is only useful when your MCP client cannot obtain an Entra token by itself.
+If your client can already call `https://<your-env>/mcp` over HTTP with a valid bearer token,
+configure that endpoint directly and skip the bridge entirely.
 
 Required environment variables:
 
@@ -164,40 +166,6 @@ Example VS Code MCP configuration:
 }
 ```
 
-### Cloud bridge mode
-
-Required environment variables:
-
-| Variable | Description |
-|---|---|
-| `D365FO_PROXY_URL` | Hosted ALM XPP proxy endpoint, for example `https://www.almxpp.com/api/d365fo/mcp` |
-| `D365FO_PROXY_API_KEY` | ALM XPP API token used to call the hosted proxy |
-| `D365FO_MCP_URL` | Optional but recommended per-user target environment URL |
-| `D365FO_RESOURCE` | Optional but recommended per-user resource URL |
-
-In multi-user scenarios, keep the environment URL in each user's MCP config (not in ACA global variables).
-The launcher forwards these values to the cloud bridge per request.
-
-Example VS Code MCP configuration:
-
-```json
-{
-  "servers": {
-    "d365fo-data": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "-p", "almxppmcp", "almxppmcp-d365fo-proxy"],
-      "env": {
-        "D365FO_PROXY_URL": "https://www.almxpp.com/api/d365fo/mcp",
-        "D365FO_PROXY_API_KEY": "YOUR_ALMXPP_TOKEN",
-        "D365FO_MCP_URL": "https://YOUR-ENV.sandbox.operations.dynamics.com/mcp",
-        "D365FO_RESOURCE": "https://YOUR-ENV.sandbox.operations.dynamics.com"
-      }
-    }
-  }
-}
-```
-
 ### D365FO prerequisites
 
 1. Install Azure CLI and run `az login`
@@ -219,8 +187,7 @@ Use the two MCP servers together:
 - ask `d365fo-data` to inspect the real environment data, forms, or custom actions
 - cross the results in the chat to connect KB, custom code, work items, and live data
 
-See [`examples/vscode-mcp.d365fo-data.json`](examples/vscode-mcp.d365fo-data.json) and
-[`examples/vscode-mcp.d365fo-data.cloud.json`](examples/vscode-mcp.d365fo-data.cloud.json) for ready-to-use setups.
+See [`examples/vscode-mcp.d365fo-data.json`](examples/vscode-mcp.d365fo-data.json) for a ready-to-use setup.
 
 ---
 
