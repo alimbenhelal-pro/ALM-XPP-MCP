@@ -26,8 +26,7 @@
   },
   "license": "MIT",
   "bin": {
-    "almxppmcp": "bin/almxppmcp.js",
-    "almxppmcp-d365fo-proxy": "bin/almxppmcp-d365fo-proxy.js"
+    "almxppmcp": "bin/almxppmcp.js"
   },
   "main": "./bin/almxppmcp.js",
   "engines": {
