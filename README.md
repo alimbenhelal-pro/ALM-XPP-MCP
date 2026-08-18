@@ -1,10 +1,23 @@
 # almxppmcp
 
-> **npx launcher** for the [ALM XPP MCP](https://almxpp.com) cloud server - a Dynamics 365 Finance & Operations AI agent exposing **90 tools** over MCP.
+> **npx launcher** for the [ALM XPP](https://almxpp.com) **Cloud MCP** - a Dynamics 365 Finance & Operations AI agent exposing **90 tools** over MCP.
 
 The server answers from a pre-built index of the standard D365 F&O codebase:
 **200K+ AOT objects**, **1.3M+ code chunks**, **25M+ cross-references** and
 **24M+ label translations** -- 392K label ids rendered across 74 languages.
+
+### Three servers, three roles
+
+Three different MCP servers show up around D365 F&O. This README always calls them by these names:
+
+| Name | What it is | How you get it |
+|---|---|---|
+| **Cloud MCP** | The hosted ALM XPP server: 90 tools over the indexed D365 codebase | this package -- `npx almxppmcp` |
+| **Local MCP** | Runs on your own dev machine, next to the D365 SDK: 121 tools, 36 of which write AOT files, compile X++, sync the database | separate licensed component, see <https://almxpp.com> |
+| **Environment MCP** | The MCP server your D365FO environment exposes itself -- Microsoft's, not ours -- serving live data | enabled inside D365FO, reached with the `almxppmcp-d365fo-proxy` command below |
+
+This npm package ships only the **Cloud MCP** launcher and the command that connects to the **Environment MCP**.
+The Local MCP is not distributed here.
 
 ## Requirements
 
@@ -96,41 +109,38 @@ npx almxppmcp
 
 ---
 
-## Companion server for a live D365FO environment
+## Connecting to the Environment MCP
 
-`almxppmcp` answers from a pre-built index of the codebase. It does **not** read your environment's data.
+The Cloud MCP answers from a pre-built index of the codebase. It does **not** read your environment's data.
 
-D365FO exposes an MCP endpoint of its own at `https://<your-env>/mcp`, enabled inside D365FO under
-`Allowed MCP clients`. That endpoint is Microsoft's, not ours. It only accepts HTTPS calls carrying a
-Microsoft Entra bearer token for the environment, which most MCP clients cannot obtain by themselves.
+Your D365FO environment exposes an MCP server of its own at `https://<your-env>/mcp`, enabled inside
+D365FO under `Allowed MCP clients`. It only accepts HTTPS calls carrying a Microsoft Entra bearer token
+for that environment.
 
-`almxppmcp-d365fo-proxy` is the small stdio bridge that closes that gap: it acquires the token, forwards
-the JSON-RPC traffic, and makes the environment appear as an ordinary MCP server alongside `almxppmcp`.
-It adds no tools of its own -- the tools you see come from your environment.
+**Use the `almxppmcp-d365fo-proxy` command only if your MCP client cannot obtain that token by itself.**
+That is the single problem it solves: it signs in with Azure CLI, keeps the token fresh, and exposes the
+Environment MCP over stdio. It adds no tools of its own -- every tool you see comes from your environment.
+If your client can already call `https://<your-env>/mcp` over HTTP with a valid bearer token, declare that
+endpoint directly and ignore this command.
 
-In every example below, `d365fo-data` is simply the server name chosen in the config file. Rename it freely.
+The token is obtained on your own machine, so nothing about your environment transits through the Cloud MCP.
 
-The token is acquired on your own machine with Azure CLI, so nothing about your environment transits
-through the ALM XPP cloud server: the bridge talks straight from your machine to your environment.
+In the examples below, `d365fo-data` is simply the server name chosen in the config file. Rename it freely.
 
 So the split is:
 
-- `almxppmcp`: KB, custom code, relations, Azure DevOps, generation
-- `almxppmcp-d365fo-proxy`: your environment's own MCP endpoint, reached with an Entra token
+- **Cloud MCP** (`almxppmcp`): KB, custom code, relations, Azure DevOps, generation
+- **Environment MCP** (`almxppmcp-d365fo-proxy`): live data from your own environment
 
-### What it does
+### What the command does
 
-- runs as a local stdio MCP server for Copilot, Cursor, or Claude
-- acquires a Microsoft Entra bearer token with `az account get-access-token`
-- forwards JSON-RPC messages to the D365FO remote MCP endpoint
+- runs as a stdio MCP server for Copilot, Cursor, or Claude
+- acquires a Microsoft Entra bearer token with `az account get-access-token` and refreshes it every 45 minutes
+- forwards JSON-RPC messages to the Environment MCP
 - preserves `mcp-session-id` across requests
 - handles plain JSON and `text/event-stream` responses
 
-### Local direct mode
-
-This bridge is only useful when your MCP client cannot obtain an Entra token by itself.
-If your client can already call `https://<your-env>/mcp` over HTTP with a valid bearer token,
-configure that endpoint directly and skip the bridge entirely.
+### Configuration
 
 Required environment variables:
 
@@ -177,14 +187,14 @@ Note:
 
 - this universal client id is configured in D365 only
 - do not put this client id in MCP JSON
-- MCP JSON only needs the proxy command and the relevant URL/env values
+- MCP JSON only needs the command and the relevant URL/env values
 
 ### Recommended usage pattern
 
-Use the two MCP servers together:
+Use the Cloud MCP and the Environment MCP together:
 
-- ask `almxppmcp` to identify the table, entity, relations, custom extensions, and related work items
-- ask `d365fo-data` to inspect the real environment data, forms, or custom actions
+- ask the **Cloud MCP** to identify the table, entity, relations, custom extensions, and related work items
+- ask the **Environment MCP** to inspect the real environment data, forms, or custom actions
 - cross the results in the chat to connect KB, custom code, work items, and live data
 
 See [`examples/vscode-mcp.d365fo-data.json`](examples/vscode-mcp.d365fo-data.json) for a ready-to-use setup.
@@ -193,10 +203,11 @@ See [`examples/vscode-mcp.d365fo-data.json`](examples/vscode-mcp.d365fo-data.jso
 
 ## What tools are available?
 
-The cloud server exposes **90 tools** across 14 categories. A companion local
-server adds **36 more** for anything that must run next to your D365 environment
-(build, deploy, database sync, workspace writes). It also carries the 85 tools it
-shares with the cloud, so the full toolbox is **126 distinct tools**.
+The **Cloud MCP** exposes **90 tools** across 14 categories, listed below.
+
+The **Local MCP** carries the 85 of them that do not depend on the cloud index, plus **36 more** that must
+run next to your D365 environment (build, deploy, database sync, workspace writes) -- 121 tools on that side.
+Across both servers the toolbox is **126 distinct tools**.
 
 | Category | Tools | Names |
 |---|---:|---|
@@ -236,12 +247,12 @@ npm as [`almxppmcp`](https://www.npmjs.com/package/almxppmcp):
 
 | Path | Purpose |
 |---|---|
-| `bin/almxppmcp.js` | Resolves the API key and server URL, then bridges stdio to the cloud server via `mcp-remote` |
-| `bin/almxppmcp-d365fo-proxy.js` | Optional stdio bridge to the MCP endpoint exposed by your own D365FO environment |
+| `bin/almxppmcp.js` | Resolves the API key and server URL, then connects your client to the Cloud MCP via `mcp-remote` |
+| `bin/almxppmcp-d365fo-proxy.js` | Optional: connects your client to the Environment MCP, obtaining the Entra token for it |
 | `examples/` | Ready-to-copy VS Code MCP configurations |
 | `server.json` | MCP registry manifest |
 
-The server itself — index, retrieval, the 90 tools and the licensing layer — is
+The Cloud MCP itself — index, retrieval, the 90 tools and the licensing layer — is
 closed source and runs at `https://www.almxpp.com/mcp`. The launcher never sees
 your code: it forwards requests over HTTPS with the token you provide.
 
