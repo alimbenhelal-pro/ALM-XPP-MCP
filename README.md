@@ -1,10 +1,32 @@
 # almxppmcp
 
+[![npm version](https://img.shields.io/npm/v/almxppmcp?logo=npm&color=cb3837)](https://www.npmjs.com/package/almxppmcp)
+[![npm downloads](https://img.shields.io/npm/dm/almxppmcp?logo=npm&color=cb3837&label=downloads%2Fmonth)](https://www.npmjs.com/package/almxppmcp)
+[![MCP registry](https://img.shields.io/badge/MCP%20registry-listed-0ea5e9?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/?q=alm-xpp-mcp)
+[![license](https://img.shields.io/github/license/alimbenhelal-pro/ALM-XPP-MCP?color=34d399)](LICENSE)
+[![node](https://img.shields.io/node/v/almxppmcp?logo=node.js&logoColor=white&color=339933)](https://nodejs.org)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Alim%20Ben%20Helal-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/alimbenhelal)
+
 > **npx launcher** for the [ALM XPP](https://almxpp.com) **Cloud MCP** - a Dynamics 365 Finance & Operations AI agent exposing **90 tools** over MCP.
+
+Published in the [official MCP registry](https://registry.modelcontextprotocol.io/?q=alm-xpp-mcp) as
+`io.github.alimbenhelal-pro/alm-xpp-mcp`.
 
 The server answers from a pre-built index of the standard D365 F&O codebase:
 **200K+ AOT objects**, **1.3M+ code chunks**, **25M+ cross-references** and
 **24M+ label translations** -- 392K label ids rendered across 74 languages.
+
+### Why an index rather than a general-purpose model
+
+A general model answers X++ questions from whatever it memorised during training. This server answers
+from a specific, versioned copy of the code your environment actually runs:
+
+| | What it means in practice |
+|---|---|
+| **Versioned** | The index is built from one D365 release (currently `10.0.2645.32`) -- answers match your platform, not an average of every version ever written |
+| **Traceable** | Every result carries the AOT object and model it came from, so you can open it in Visual Studio and check |
+| **Your own code too** | Point `D365-Custom-Model-Path` at your metadata, or let it index your Azure DevOps repository, and your extensions are searched alongside the standard code |
+| **No training on your code** | Your metadata is indexed per session and used to answer your calls. It is not used to train anything |
 
 ### Three servers, three roles
 
