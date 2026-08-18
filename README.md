@@ -36,7 +36,7 @@ The Cloud MCP is a **streamable HTTP** MCP server at `https://api.almxpp.com/mcp
 ```json
 {
   "servers": {
-    "almxpp-cloud": {
+    "almxppmcp": {
       "type": "http",
       "url": "https://api.almxpp.com/mcp",
       "headers": {
@@ -55,6 +55,8 @@ without them those tools simply report that they are not configured.
 | Header | Unlocks |
 |---|---|
 | `X-API-Key` | **Required.** Your API token. `Authorization: Bearer <token>` works too. |
+| `D365-Custom-Model-Path` | Absolute path to your own extension / ISV metadata on the calling machine. Analysis tools read from here |
+| `D365-Standard-Model-Path` | Absolute path to `PackagesLocalDirectory`, used as a read-only reference for standard objects |
 | `DEVOPS_ORG_URL` | Azure DevOps organisation, e.g. `https://dev.azure.com/MyOrg` |
 | `DEVOPS_PROJECT` | Azure DevOps project name. Required alongside `DEVOPS_ORG_URL`. |
 | `DEVOPS_PAT` | Azure DevOps token. Indexes your own X++ metadata from the repo and reads work items. |
@@ -213,7 +215,7 @@ npm as [`almxppmcp`](https://www.npmjs.com/package/almxppmcp):
 | `server.json` | MCP registry manifest |
 
 The Cloud MCP itself — index, retrieval, the 90 tools and the licensing layer — is
-closed source and runs at `https://www.almxpp.com/mcp`. The launcher never sees
+closed source and runs at `https://api.almxpp.com/mcp`. The launcher never sees
 your code: it forwards requests over HTTPS with the token you provide.
 
 ---

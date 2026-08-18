@@ -1,42 +1,52 @@
 {
   "inputs": [
     {
-      "id": "almxpp_token",
+      "id": "almxpp_api_key",
       "type": "promptString",
-      "description": "ALM XPP API token (dashboard > API token)",
+      "description": "ALM XPP MCP - API token (dashboard > MCP Server)",
       "password": true
     },
     {
       "id": "devops_pat",
       "type": "promptString",
-      "description": "Azure DevOps Personal Access Token (Code: Read, Work Items: Read)",
+      "description": "Azure DevOps PAT (Code: Read, Work Items: Read/Write)",
       "password": true
     },
     {
       "id": "d365fo_client_secret",
       "type": "promptString",
-      "description": "Client secret of the Entra app registered in D365FO",
+      "description": "D365FO - Entra app client secret",
+      "password": true
+    },
+    {
+      "id": "appinsights_client_secret",
+      "type": "promptString",
+      "description": "Application Insights - Entra app client secret",
       "password": true
     }
   ],
   "servers": {
-    "almxpp-cloud": {
+    "almxppmcp": {
       "type": "http",
       "url": "https://api.almxpp.com/mcp",
       "headers": {
-        "X-API-Key": "${input:almxpp_token}",
-
-        "DEVOPS_ORG_URL": "https://dev.azure.com/YourOrg",
-        "DEVOPS_PROJECT": "Your Project",
+        "X-API-Key": "${input:almxpp_api_key}",
+        "D365-Custom-Model-Path": "C:\\MyProject\\Metadata",
+        "D365-Standard-Model-Path": "C:\\PackagesLocalDirectory",
+        "DEVOPS_ORG_URL": "https://dev.azure.com/MyOrg",
+        "DEVOPS_PROJECT": "My Project",
         "DEVOPS_PAT": "${input:devops_pat}",
-        "DEVOPS_REPO": "YourRepo",
+        "DEVOPS_REPO": "MyRepo",
         "DEVOPS_BRANCH": "main",
         "DEVOPS_METADATA_PATH": "Metadata",
-
-        "D365FO-Url": "https://your-env.sandbox.operations.dynamics.com",
+        "D365FO-Url": "https://my-env.sandbox.operations.dynamics.com",
         "D365FO-Tenant-Id": "00000000-0000-0000-0000-000000000000",
         "D365FO-Client-Id": "00000000-0000-0000-0000-000000000000",
-        "D365FO-Client-Secret": "${input:d365fo_client_secret}"
+        "D365FO-Client-Secret": "${input:d365fo_client_secret}",
+        "AppInsights-Workspace-Id": "00000000-0000-0000-0000-000000000000",
+        "AppInsights-Tenant-Id": "00000000-0000-0000-0000-000000000000",
+        "AppInsights-Client-Id": "00000000-0000-0000-0000-000000000000",
+        "AppInsights-Client-Secret": "${input:appinsights_client_secret}"
       }
     }
   }
