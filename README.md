@@ -70,14 +70,15 @@ npx almxppmcp
 }
 ```
 
-> **Tip:** replace `YOUR_TOKEN` with the token shown on your dashboard. Set it as an env var to avoid hard-coding it:
+> **Tip:** replace `YOUR_TOKEN` with the token shown on your dashboard. Set it as an env var to avoid hard-coding it
+> (root key is `mcpServers` for Cursor and Claude Desktop, `servers` for VS Code):
 >
 > ```json
 > {
 >   "mcpServers": {
 >     "almxppmcp": {
 >       "command": "npx",
->     "args": ["-y", "almxppmcp"],
+>       "args": ["-y", "almxppmcp"],
 >       "env": { "ALMXPPMCP_API_KEY": "YOUR_TOKEN" }
 >     }
 >   }
@@ -95,24 +96,34 @@ npx almxppmcp
 
 ---
 
-## Dedicated D365FO Data Environment
+## Companion server for a live D365FO environment
 
-Use the bundled `almxppmcp-d365fo-proxy` when you want a second MCP server dedicated to the live D365FO environment data layer.
+`almxppmcp` answers from a pre-built index of the codebase. It does **not** read your environment's data.
 
-It now supports both modes:
+D365FO exposes an MCP endpoint of its own at `https://<your-env>/mcp`, enabled inside D365FO under
+`Allowed MCP clients`. That endpoint is Microsoft's, not ours. It only accepts HTTPS calls carrying a
+Microsoft Entra bearer token for the environment, which most MCP clients cannot obtain by themselves.
 
-- local direct mode: your machine gets the D365FO token with Azure CLI and calls the environment directly
-- cloud bridge mode: the launcher calls your hosted ALM XPP endpoint, which acquires the D365FO token server-side
+`almxppmcp-d365fo-proxy` is the small stdio bridge that closes that gap: it acquires the token, forwards
+the JSON-RPC traffic, and makes the environment appear as an ordinary MCP server alongside `almxppmcp`.
+It adds no tools of its own -- the tools you see come from your environment.
 
-This is intentionally separate from `almxppmcp`:
+In every example below, `d365fo-data` is simply the server name chosen in the config file. Rename it freely.
+
+Two modes are supported:
+
+- local direct mode: your machine acquires the token with Azure CLI and calls the environment directly
+- cloud bridge mode: the launcher calls your hosted ALM XPP endpoint, which acquires the token server-side
+
+So the split is:
 
 - `almxppmcp`: KB, custom code, relations, Azure DevOps, generation
-- `almxppmcp-d365fo-proxy`: live D365FO environment MCP endpoint over Azure CLI auth
+- `almxppmcp-d365fo-proxy`: your environment's own MCP endpoint, reached with an Entra token
 
 ### What it does
 
 - runs as a local stdio MCP server for Copilot, Cursor, or Claude
-- fetches Azure AD bearer tokens with `az account get-access-token`
+- acquires a Microsoft Entra bearer token with `az account get-access-token`
 - forwards JSON-RPC messages to the D365FO remote MCP endpoint
 - preserves `mcp-session-id` across requests
 - handles plain JSON and `text/event-stream` responses
@@ -208,7 +219,8 @@ Use the two MCP servers together:
 - ask `d365fo-data` to inspect the real environment data, forms, or custom actions
 - cross the results in the chat to connect KB, custom code, work items, and live data
 
-See `npm/examples/vscode-mcp.d365fo-data.json`, `npm/examples/vscode-mcp.d365fo-data.cloud.json`, and `docs/D365FO_DATA_ENVIRONMENT_SETUP.md` for ready-to-use setups.
+See [`examples/vscode-mcp.d365fo-data.json`](examples/vscode-mcp.d365fo-data.json) and
+[`examples/vscode-mcp.d365fo-data.cloud.json`](examples/vscode-mcp.d365fo-data.cloud.json) for ready-to-use setups.
 
 ---
 
@@ -258,7 +270,7 @@ npm as [`almxppmcp`](https://www.npmjs.com/package/almxppmcp):
 | Path | Purpose |
 |---|---|
 | `bin/almxppmcp.js` | Resolves the API key and server URL, then bridges stdio to the cloud server via `mcp-remote` |
-| `bin/almxppmcp-d365fo-proxy.js` | Optional stdio proxy to a dedicated D365FO OData environment |
+| `bin/almxppmcp-d365fo-proxy.js` | Optional stdio bridge to the MCP endpoint exposed by your own D365FO environment |
 | `examples/` | Ready-to-copy VS Code MCP configurations |
 | `server.json` | MCP registry manifest |
 
