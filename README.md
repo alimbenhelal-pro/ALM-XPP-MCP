@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/almxppmcp?logo=npm&color=cb3837)](https://www.npmjs.com/package/almxppmcp)
 [![npm downloads](https://img.shields.io/npm/dm/almxppmcp?logo=npm&color=cb3837&label=downloads%2Fmonth)](https://www.npmjs.com/package/almxppmcp)
+[![MCP endpoint](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.almxpp.com%2Fbadge%2Fstatus)](https://api.almxpp.com/mcp)
 [![MCP registry](https://img.shields.io/badge/MCP%20registry-listed-0ea5e9?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/?q=alm-xpp-mcp)
 [![license](https://img.shields.io/github/license/alimbenhelal-pro/ALM-XPP-MCP?color=34d399)](LICENSE)
 [![node](https://img.shields.io/node/v/almxppmcp?logo=node.js&logoColor=white&color=339933)](https://nodejs.org)
@@ -23,7 +24,7 @@ from a specific, versioned copy of the code your environment actually runs:
 
 | | What it means in practice |
 |---|---|
-| **Versioned** | The index is built from one D365 release (currently `10.0.2645.32`) -- answers match your platform, not an average of every version ever written |
+| **Versioned** | The index is built from one D365 release, and the live version is reported by [`GET /mcp`](https://api.almxpp.com/mcp) -- answers match that platform, not an average of every version ever written |
 | **Traceable** | Every result carries the AOT object and model it came from, so you can open it in Visual Studio and check |
 | **Your own code too** | Point `D365-Custom-Model-Path` at your metadata, or let it index your Azure DevOps repository, and your extensions are searched alongside the standard code |
 | **No training on your code** | Your metadata is indexed per session and used to answer your calls. It is not used to train anything |
