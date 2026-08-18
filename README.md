@@ -14,7 +14,7 @@ Three different MCP servers show up around D365 F&O. This README always calls th
 |---|---|---|
 | **Cloud MCP** | The hosted ALM XPP server: 90 tools over the indexed D365 codebase | this package -- `npx almxppmcp` |
 | **Local MCP** | Runs on your own dev machine, next to the D365 SDK: 121 tools, 36 of which write AOT files, compile X++, sync the database | separate licensed component, see <https://almxpp.com> |
-| **Environment MCP** | The MCP server your D365FO environment exposes itself -- Microsoft's, not ours -- serving live data | enabled inside D365FO, reached with the `almxppmcp-d365fo-proxy` command below |
+| **Environment MCP** | Microsoft's own **[Dynamics 365 ERP MCP server](https://learn.microsoft.com/dynamics365/fin-ops-core/dev-itpro/copilot/copilot-mcp)**, exposed by your F&O environment itself, serving live data | enabled inside D365FO -- most clients connect to it directly, see below |
 
 This npm package ships only the **Cloud MCP** launcher and the command that connects to the **Environment MCP**.
 The Local MCP is not distributed here.
@@ -112,16 +112,19 @@ npx almxppmcp
 ## Connecting to the Environment MCP
 
 The Cloud MCP answers from a pre-built index of the codebase. It does **not** read your environment's data.
+Live data comes from Microsoft's **Dynamics 365 ERP MCP server**, which your F&O environment exposes at
+`https://<your-env>/mcp` once enabled under `Allowed MCP clients`
+([Microsoft documentation](https://learn.microsoft.com/dynamics365/fin-ops-core/dev-itpro/copilot/copilot-mcp)).
 
-Your D365FO environment exposes an MCP server of its own at `https://<your-env>/mcp`, enabled inside
-D365FO under `Allowed MCP clients`. It only accepts HTTPS calls carrying a Microsoft Entra bearer token
-for that environment.
+> **Most clients do not need anything from this package to reach it.**
+> Visual Studio Code, Copilot Studio, Microsoft Cowork and the Finance Agent are allowed by default and
+> connect over plain HTTP, VS Code handling the sign-in itself
+> ([official VS Code walkthrough](https://learn.microsoft.com/dynamics365/fin-ops-core/dev-itpro/copilot/mcp/mcp-vscode)).
+> In VS Code: `MCP: Add Server...` > `HTTP` > `https://<your-env>/mcp`. That is the recommended route.
 
-**Use the `almxppmcp-d365fo-proxy` command only if your MCP client cannot obtain that token by itself.**
+`almxppmcp-d365fo-proxy` exists only for clients that cannot obtain a Microsoft Entra token themselves.
 That is the single problem it solves: it signs in with Azure CLI, keeps the token fresh, and exposes the
 Environment MCP over stdio. It adds no tools of its own -- every tool you see comes from your environment.
-If your client can already call `https://<your-env>/mcp` over HTTP with a valid bearer token, declare that
-endpoint directly and ignore this command.
 
 The token is obtained on your own machine, so nothing about your environment transits through the Cloud MCP.
 
@@ -130,7 +133,7 @@ In the examples below, `d365fo-data` is simply the server name chosen in the con
 So the split is:
 
 - **Cloud MCP** (`almxppmcp`): KB, custom code, relations, Azure DevOps, generation
-- **Environment MCP** (`almxppmcp-d365fo-proxy`): live data from your own environment
+- **Environment MCP** (Dynamics 365 ERP MCP server): live data from your own environment
 
 ### What the command does
 
@@ -176,17 +179,21 @@ Example VS Code MCP configuration:
 }
 ```
 
-### D365FO prerequisites
+### Prerequisites for this command
 
 1. Install Azure CLI and run `az login`
 2. In D365FO, open `Allowed MCP clients`
-3. Add Azure CLI client id `04b07795-8ddb-461a-bbee-02f9e1bf7b46`
-4. Mark it as allowed for the target environment
+3. Add the Azure CLI client id `04b07795-8ddb-461a-bbee-02f9e1bf7b46` and mark it as allowed
+
+> **Weigh this before doing it.** That client id is the *universal* Azure CLI application, shared by every
+> Azure CLI user in the tenant. Allowing it opens the Environment MCP to anyone who can run `az login`
+> against your tenant. Visual Studio Code has its own dedicated client id and is allowed out of the box,
+> so connecting VS Code directly avoids this trade-off entirely.
 
 Note:
 
-- this universal client id is configured in D365 only
-- do not put this client id in MCP JSON
+- this client id is configured in D365 only
+- do not put it in your MCP JSON
 - MCP JSON only needs the command and the relevant URL/env values
 
 ### Recommended usage pattern
