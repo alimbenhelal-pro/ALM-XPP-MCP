@@ -20,13 +20,14 @@ The server answers from a pre-built index of the standard D365 F&O codebase:
 ### Why an index rather than a general-purpose model
 
 A general model answers X++ questions from whatever it memorised during training. This server answers
-from a specific, versioned copy of the code your environment actually runs:
+from a specific, versioned copy of the standard D365 codebase:
 
 | | What it means in practice |
 |---|---|
-| **Versioned** | The index is built from one D365 release, and the live version is reported by [`GET /mcp`](https://api.almxpp.com/mcp) -- answers match that platform, not an average of every version ever written |
+| **A known release** | The Cloud MCP answers from the release **the server** has indexed, not from yours. The one currently loaded is reported by [`GET /mcp`](https://api.almxpp.com/mcp) -- check it before relying on a version-sensitive answer |
+| **Your own version** | Indexing **your** environment's exact build is what the **Local MCP** is for: it runs next to your D365 SDK and indexes the `PackagesLocalDirectory` on that machine. The Cloud MCP cannot do this -- it never sees your platform binaries |
 | **Traceable** | Every result carries the AOT object and model it came from, so you can open it in Visual Studio and check |
-| **Your own code too** | Point `D365-Custom-Model-Path` at your metadata, or let it index your Azure DevOps repository, and your extensions are searched alongside the standard code |
+| **Your extensions** | Point `D365-Custom-Model-Path` at your metadata, or let it index your Azure DevOps repository, and your own code is searched alongside the standard code |
 | **No training on your code** | Your metadata is indexed per session and used to answer your calls. It is not used to train anything |
 
 ### Three servers, three roles
@@ -36,7 +37,7 @@ Three different MCP servers show up around D365 F&O. This README always calls th
 | Name | What it is | How you get it |
 |---|---|---|
 | **Cloud MCP** | The hosted ALM XPP server: 90 tools over the indexed D365 codebase | this package -- `npx almxppmcp` |
-| **Local MCP** | Runs on your own dev machine, next to the D365 SDK: 121 tools, 36 of which write AOT files, compile X++, sync the database | separate licensed component, see <https://almxpp.com> |
+| **Local MCP** | Runs on your own dev machine, next to the D365 SDK: 121 tools, 36 of which write AOT files, compile X++, sync the database. It is also the only one that can index **your** exact platform build, by reading the `PackagesLocalDirectory` on that machine | separate licensed component, contact <alim@almxpp.com> |
 | **Environment MCP** | Microsoft's own **[Dynamics 365 ERP MCP server](https://learn.microsoft.com/dynamics365/fin-ops-core/dev-itpro/copilot/copilot-mcp)**, exposed by your F&O environment itself, serving live data | enabled inside D365FO, then [connected directly from VS Code](https://learn.microsoft.com/dynamics365/fin-ops-core/dev-itpro/copilot/mcp/mcp-vscode) |
 
 This npm package covers the **Cloud MCP** only. The Local MCP is licensed separately, and the Environment
@@ -53,6 +54,10 @@ MCP is Microsoft's -- your client connects to it on its own.
 
 The Cloud MCP is a **streamable HTTP** MCP server at `https://api.almxpp.com/mcp`, authenticated with the
 `X-API-Key` header. Any client that speaks HTTP connects to it directly -- no Node.js, no launcher.
+
+> **Tool calls are served on `api.almxpp.com` only.** `almxpp.com` and `www.almxpp.com` host the website;
+> a JSON-RPC POST sent there is refused with a message naming the correct URL. Only the host changes --
+> your API key and headers stay the same.
 
 ### VS Code / GitHub Copilot -- `.vscode/mcp.json`
 
