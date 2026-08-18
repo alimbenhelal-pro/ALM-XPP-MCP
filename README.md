@@ -4,7 +4,7 @@
 
 The server answers from a pre-built index of the standard D365 F&O codebase:
 **200K+ AOT objects**, **1.3M+ code chunks**, **25M+ cross-references** and
-**392K+ labels** indexed in every language.
+**24M+ label translations** -- 392K label ids rendered across 74 languages.
 
 ## Requirements
 
@@ -215,8 +215,9 @@ See `npm/examples/vscode-mcp.d365fo-data.json`, `npm/examples/vscode-mcp.d365fo-
 ## What tools are available?
 
 The cloud server exposes **90 tools** across 14 categories. A companion local
-server adds 58 more for anything that must run next to your D365 environment
-(build, deploy, database sync, workspace writes).
+server adds **36 more** for anything that must run next to your D365 environment
+(build, deploy, database sync, workspace writes). It also carries the 85 tools it
+shares with the cloud, so the full toolbox is **126 distinct tools**.
 
 | Category | Tools | Names |
 |---|---:|---|
@@ -261,7 +262,7 @@ npm as [`almxppmcp`](https://www.npmjs.com/package/almxppmcp):
 | `examples/` | Ready-to-copy VS Code MCP configurations |
 | `server.json` | MCP registry manifest |
 
-The server itself — index, retrieval, the 148 tools and the licensing layer — is
+The server itself — index, retrieval, the 90 tools and the licensing layer — is
 closed source and runs at `https://www.almxpp.com/mcp`. The launcher never sees
 your code: it forwards requests over HTTPS with the token you provide.
 
