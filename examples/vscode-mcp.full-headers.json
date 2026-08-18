@@ -1,0 +1,43 @@
+{
+  "inputs": [
+    {
+      "id": "almxpp_token",
+      "type": "promptString",
+      "description": "ALM XPP API token (dashboard > API token)",
+      "password": true
+    },
+    {
+      "id": "devops_pat",
+      "type": "promptString",
+      "description": "Azure DevOps Personal Access Token (Code: Read, Work Items: Read)",
+      "password": true
+    },
+    {
+      "id": "d365fo_client_secret",
+      "type": "promptString",
+      "description": "Client secret of the Entra app registered in D365FO",
+      "password": true
+    }
+  ],
+  "servers": {
+    "almxpp-cloud": {
+      "type": "http",
+      "url": "https://api.almxpp.com/mcp",
+      "headers": {
+        "X-API-Key": "${input:almxpp_token}",
+
+        "DEVOPS_ORG_URL": "https://dev.azure.com/YourOrg",
+        "DEVOPS_PROJECT": "Your Project",
+        "DEVOPS_PAT": "${input:devops_pat}",
+        "DEVOPS_REPO": "YourRepo",
+        "DEVOPS_BRANCH": "main",
+        "DEVOPS_METADATA_PATH": "Metadata",
+
+        "D365FO-Url": "https://your-env.sandbox.operations.dynamics.com",
+        "D365FO-Tenant-Id": "00000000-0000-0000-0000-000000000000",
+        "D365FO-Client-Id": "00000000-0000-0000-0000-000000000000",
+        "D365FO-Client-Secret": "${input:d365fo_client_secret}"
+      }
+    }
+  }
+}

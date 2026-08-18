@@ -47,6 +47,35 @@ The Cloud MCP is a **streamable HTTP** MCP server at `https://api.almxpp.com/mcp
 }
 ```
 
+### Headers
+
+`X-API-Key` is the only required header. The others unlock the tools that need your own context --
+without them those tools simply report that they are not configured.
+
+| Header | Unlocks |
+|---|---|
+| `X-API-Key` | **Required.** Your API token. `Authorization: Bearer <token>` works too. |
+| `DEVOPS_ORG_URL` | Azure DevOps organisation, e.g. `https://dev.azure.com/MyOrg` |
+| `DEVOPS_PROJECT` | Azure DevOps project name. Required alongside `DEVOPS_ORG_URL`. |
+| `DEVOPS_PAT` | Azure DevOps token. Indexes your own X++ metadata from the repo and reads work items. |
+| `DEVOPS_REPO` | Repository holding the metadata, when the project has several |
+| `DEVOPS_BRANCH` | Branch to index, default `main` |
+| `DEVOPS_METADATA_PATH` | Folder inside the repo holding the AOT XML, default `Metadata` |
+| `D365FO-Url` | Live environment base URL, for the `odata_*` and `dmf_*` tools |
+| `D365FO-Tenant-Id` | Entra tenant of that environment |
+| `D365FO-Client-Id` | Entra app registered in D365FO under **Microsoft Entra applications** |
+| `D365FO-Client-Secret` | Secret of that app |
+| `AppInsights-Workspace-Id` | Log Analytics workspace, for the `appinsights_*` tools |
+| `AppInsights-Tenant-Id` | Entra tenant of that workspace |
+| `AppInsights-Client-Id` | Entra app with *Log Analytics Reader* on the workspace |
+| `AppInsights-Client-Secret` | Secret of that app |
+
+The live-environment and telemetry credentials can also be set for the session with
+`d365fo_set_connection` and `appinsights_set_connection`, so they never sit in a config file.
+
+[`examples/vscode-mcp.full-headers.json`](examples/vscode-mcp.full-headers.json) puts all of this together
+and keeps every secret out of the file by prompting for it through VS Code `inputs`.
+
 ---
 
 ## The `npx` launcher
