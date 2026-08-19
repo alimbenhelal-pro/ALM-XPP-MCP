@@ -77,6 +77,20 @@ jobs:
       - name: Show what would be published
         run: npm pack --dry-run
 
+      # npm answers a bare 404 whether the credential is wrong or absent, so record the three
+      # things that decide whether the OIDC exchange can happen at all.
+      - name: Preflight the publish credentials
+        run: |
+          echo "npm  : $(npm --version)   (trusted publishing needs >= 11.5.1)"
+          echo "node : $(node --version)  (needs >= 22.14)"
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "OIDC : id-token endpoint available"
+          else
+            echo "OIDC : ABSENT -- id-token: write is not in effect"
+          fi
+          TOKEN_LINE=$(grep -c '_authToken' ~/.npmrc 2>/dev/null || echo 0)
+          echo ".npmrc auth entries: $TOKEN_LINE"
+
       # No NODE_AUTH_TOKEN: npm exchanges the OIDC token itself, and generates provenance on its own
       # because this repository is public.
       - name: Publish to npm
