@@ -1,0 +1,115 @@
+name: Publish launcher → npm + MCP registry
+
+# Publishing was two manual commands run from a laptop, which is how package.json and server.json
+# drifted to 1.4.2 and 1.4.3 while npm carried a third version. A tag now does both, in the only
+# order that works: the MCP registry validates that the npm version already exists.
+#
+# No secret is stored. npm authenticates by OIDC through its trusted publisher configuration, and
+# the MCP registry authenticates this repository the same way.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Verify only, publish nothing'
+        required: false
+        default: 'true'
+
+concurrency:
+  group: publish-launcher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish almxppmcp
+    runs-on: ubuntu-latest        # trusted publishing rejects self-hosted runners
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write             # required for both OIDC exchanges
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Trusted publishing needs Node >= 22.14 and npm >= 11.5.1.
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Check the tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG=$(node -p "require('./package.json').version")
+          echo "tag=$TAG  package.json=$PKG"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json $PKG. Use 'npm version' so the two stay together."
+            exit 1
+          fi
+
+      - name: Check server.json is in step
+        run: |
+          node sync-version.js
+          if ! git diff --quiet -- server.json; then
+            echo "::error::server.json was out of date. Commit the result of 'npm version' rather than editing versions by hand."
+            git --no-pager diff -- server.json
+            exit 1
+          fi
+
+      # The launcher has no dependencies, so anything appearing here is a regression worth failing on.
+      - name: Check the dependency surface is still empty
+        run: |
+          npm install --no-audit --no-fund
+          COUNT=$(find node_modules -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null | wc -l)
+          echo "packages installed: $COUNT"
+          if [ "$COUNT" -ne 0 ]; then
+            echo "::error::the launcher gained $COUNT dependencies"
+            exit 1
+          fi
+
+      - name: Test the bridge
+        run: node test/bridge.test.js
+
+      - name: Show what would be published
+        run: npm pack --dry-run
+
+      # No NODE_AUTH_TOKEN: npm exchanges the OIDC token itself, and generates provenance on its own
+      # because this repository is public.
+      - name: Publish to npm
+        if: startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true'
+        run: npm publish --access public
+
+      - name: Install the MCP registry publisher
+        if: startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true'
+        run: |
+          curl -sSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_amd64.tar.gz" \
+            | tar xz mcp-publisher
+          chmod +x mcp-publisher
+
+      # The io.github.alimbenhelal-pro namespace is owned by this account, and the registry accepts
+      # an Action running in its repositories as proof -- no token to store or rotate.
+      - name: Publish to the MCP registry
+        if: startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true'
+        run: |
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish
+
+      - name: Confirm what actually landed
+        if: startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true'
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          sleep 20
+          NPM_LATEST=$(npm view almxppmcp version 2>/dev/null || echo "unreachable")
+          echo "npm latest: $NPM_LATEST (expected $VERSION)"
+          if [ "$NPM_LATEST" != "$VERSION" ]; then
+            echo "::error::npm still reports $NPM_LATEST"
+            exit 1
+          fi
+          NAME=$(node -p "require('./server.json').name")
+          curl -sS "https://registry.modelcontextprotocol.io/v0/servers?search=$NAME" \
+            | grep -q "$VERSION" && echo "MCP registry: $VERSION present" \
+            || echo "::warning::the MCP registry does not show $VERSION yet; indexing can lag"

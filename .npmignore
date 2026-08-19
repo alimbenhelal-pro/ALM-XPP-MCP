@@ -1,3 +1,6 @@
 node_modules/
 *.log
 .env
+sync-version.js
+test/
+.github/

@@ -111,7 +111,8 @@ and keeps every secret out of the file by prompting for it through VS Code `inpu
 ## The `npx` launcher
 
 Some clients only speak stdio. The `almxppmcp` command covers that case: it reads your token, sends it as
-the `X-API-Key` header, and relays the traffic to the Cloud MCP over stdio.
+the `X-API-Key` header, and relays the traffic to the Cloud MCP over stdio. It has **no dependencies** --
+just the one file, on top of what Node 18 already provides.
 
 ```bash
 npx almxppmcp --api-key YOUR_TOKEN
@@ -239,7 +240,7 @@ npm as [`almxppmcp`](https://www.npmjs.com/package/almxppmcp):
 
 | Path | Purpose |
 |---|---|
-| `bin/almxppmcp.js` | Resolves the API key and server URL, then connects your client to the Cloud MCP via `mcp-remote` |
+| `bin/almxppmcp.js` | Resolves the API key and server URL, then bridges your client's stdio to the Cloud MCP over HTTP -- no third-party package involved |
 | `server.json` | MCP registry manifest |
 
 The Cloud MCP itself — index, retrieval, the 90 tools and the licensing layer — is
