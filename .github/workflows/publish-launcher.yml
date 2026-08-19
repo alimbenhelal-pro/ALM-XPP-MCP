@@ -100,8 +100,8 @@ jobs:
           if [ -z "$ID_TOKEN" ]; then echo "::warning::no id token returned"; exit 0; fi
           echo "id token obtained (${#ID_TOKEN} chars)"
           CODE=$(curl -sS -o /tmp/exchange.json -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $ID_TOKEN" \
             -H 'Content-Type: application/json' \
-            -d "{\"idToken\":\"$ID_TOKEN\"}" \
             https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/almxppmcp || echo 000)
           echo "exchange HTTP $CODE"
           # The body carries the mismatch; the token field is removed so nothing sensitive is printed.
