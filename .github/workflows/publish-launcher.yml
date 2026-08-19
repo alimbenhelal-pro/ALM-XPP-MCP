@@ -91,6 +91,22 @@ jobs:
           TOKEN_LINE=$(grep -c '_authToken' ~/.npmrc 2>/dev/null || echo 0)
           echo ".npmrc auth entries: $TOKEN_LINE"
 
+      # npm swallows the reason it fell back to token auth, so ask its exchange endpoint directly.
+      # Read-only: a failed exchange publishes nothing and a successful one returns a token we drop.
+      - name: Ask npm why the OIDC exchange would be refused
+        run: |
+          ID_TOKEN=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=npm:registry.npmjs.org" | node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).value")
+          if [ -z "$ID_TOKEN" ]; then echo "::warning::no id token returned"; exit 0; fi
+          echo "id token obtained (${#ID_TOKEN} chars)"
+          CODE=$(curl -sS -o /tmp/exchange.json -w '%{http_code}' -X POST \
+            -H 'Content-Type: application/json' \
+            -d "{\"idToken\":\"$ID_TOKEN\"}" \
+            https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/almxppmcp || echo 000)
+          echo "exchange HTTP $CODE"
+          # The body carries the mismatch; the token field is removed so nothing sensitive is printed.
+          node -e "try{const j=require('/tmp/exchange.json');delete j.token;console.log(JSON.stringify(j,null,2))}catch(e){console.log(require('fs').readFileSync('/tmp/exchange.json','utf8').slice(0,400))}"
+
       # No NODE_AUTH_TOKEN: npm exchanges the OIDC token itself, and generates provenance on its own
       # because this repository is public.
       - name: Publish to npm
