@@ -31,11 +31,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Trusted publishing needs Node >= 22.14 and npm >= 11.5.1.
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
