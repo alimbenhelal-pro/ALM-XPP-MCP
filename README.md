@@ -4,6 +4,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/almxppmcp?logo=npm&color=cb3837&label=downloads%2Fmonth)](https://www.npmjs.com/package/almxppmcp)
 [![MCP endpoint](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.almxpp.com%2Fbadge%2Fstatus)](https://api.almxpp.com/mcp)
 [![MCP registry](https://img.shields.io/badge/MCP%20registry-listed-0ea5e9?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/?q=alm-xpp-mcp)
+[![Score M8ven](https://m8ven.ai/badge/mcp/alimbenhelal-pro-alm-xpp-mcp-1i8l2g?v=32353b85dcc6252a58d8367376c60e8f)](https://m8ven.ai/mcp/alimbenhelal-pro-alm-xpp-mcp-1i8l2g)
 [![license](https://img.shields.io/github/license/alimbenhelal-pro/ALM-XPP-MCP?color=34d399)](LICENSE)
 [![node](https://img.shields.io/node/v/almxppmcp?logo=node.js&logoColor=white&color=339933)](https://nodejs.org)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Alim%20Ben%20Helal-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/alimbenhelal)
